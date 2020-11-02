@@ -1,4 +1,6 @@
+import 'package:componentes/src/pages/alert_page.dart';
 import 'package:componentes/src/providers/menu_provider.dart';
+import 'package:componentes/src/utils/icons_helper_utils.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,19 +18,49 @@ class HomePage extends StatelessWidget {
 
   Widget _lista() {
 
-    print (menuProvider.opciones);
+    return FutureBuilder(
+      future: menuProvider.cargarData(),
+      initialData: [],
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        
+        return ListView(
+          children: _listaItems(snapshot.data, context),
+        );
 
-    return ListView(
-      children: _listaItems(),
+      },
     );
+
   }
 
-  List<Widget>_listaItems() {
-    return [
-      ListTile( title: Text('Hola Mundo')),
-      ListTile( title: Text('Hola Mundo')),
-      ListTile( title: Text('Hola Mundo')),
+  List<Widget>_listaItems(List<dynamic> data, BuildContext context) {
+    
+    final List<Widget> opciones = [];
 
-    ];
+    data.forEach((opt) {
+      
+
+      final widgetTemp = ListTile(
+        title: Text ( opt['texto']),
+        leading: getIcon(opt['icon']),
+        trailing: Icon (Icons.keyboard_arrow_right, color:Colors.blue),
+        onTap: () {
+
+          // final route = MaterialPageRoute(
+          //   builder: (context){
+          //     return AlertPage();
+          //   } 
+          // );
+
+          Navigator.pushNamed(context, opt['ruta']);
+          // Navigator.push(context, route);
+        },
+      );
+
+      opciones..add(widgetTemp)
+              ..add( Divider ());
+
+    });
+    
+    return opciones;
   }
 }
